@@ -9,9 +9,7 @@ const PORT = 3000;
 const DB_PATH = path.join(__dirname, 'db.json');
 
 app.use(express.json());
-app.use(cors({
-  origin: "http://127.0.0.1:5500"
-}));
+app.use(cors());
 function readDB() {
     const data = fs.readFileSync(DB_PATH, 'utf-8');
     return JSON.parse(data);
@@ -210,6 +208,6 @@ app.patch('/api/orders/:id/status', (req, res) => {
 
 app.listen(
     PORT,
-    () => console.log(`It' alive on http://localhost:${PORT}`)
+    () => console.log(`It' alive on ${PORT}`)
 )
 
