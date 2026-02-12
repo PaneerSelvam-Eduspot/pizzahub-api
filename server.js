@@ -4,19 +4,30 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const DB_PATH = path.join(__dirname, 'db.json');
 
 app.use(express.json());
 app.use(cors());
+
+
 function readDB() {
-    const data = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(data);
+    try {
+        const data = fs.readFileSync(DB_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error("Database read error:", err);
+        return { pizzahub: [], pizzas: [], beverages: [], orders: [] };
+    }
 }
 
 function writeDB(data) {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+    try {
+        fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+    } catch (err) {
+        console.error("Database write error:", err);
+    }
 }
 
 
@@ -206,8 +217,13 @@ app.patch('/api/orders/:id/status', (req, res) => {
     });
 });
 
+// health 
+app.get('/health', (req, res) => {
+    res.status(200).send('Server is Awake');
+});
+
 app.listen(
     PORT,
-    () => console.log(`It' alive on ${PORT}`)
+    () => console.log(`Server is running on port ${PORT}`)
 )
 
